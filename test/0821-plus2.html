@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="return false" name="form1">
+      <input type="number" name="a" />+
+      <input type="number" name="b" />
+      <button type="button" onclick="doAjax()">=</button>
+      <span id="result"></span>
+    </form>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      function doAjax() {
+        $.get(
+          "0821-plus-api.php",
+          $(document.form1).serialize(),
+          (data) => {
+            console.log(data);
+            document.querySelector("#result").innerHTML = data.answer;
+          },
+          "json"
+        );
+      }
+    </script>
+  </body>
+</html>
