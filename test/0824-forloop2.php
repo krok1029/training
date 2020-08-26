@@ -22,8 +22,21 @@
                 <?php endfor; ?>
             </tr>
         <?php endfor; ?>
+        <?php for ($i = 255; $i > 0; $i -= 17) : ?>
+            <tr>
+                <?php for ($j = 0; $j < 255; $j += 17) : ?>
+                    <td style="background-color: #<?= sprintf("%'.02X00%'.02X", $i, $j) ?>;"></td>
+                <?php endfor; ?>
+            </tr>
+        <?php endfor; ?>
     </table>
 
 </body>
+<script>
+    const table = document.querySelector('table').addEventListener('click', (event) => {
+        const t = event.target; ///target : 最裡面的element
+        console.log(t.style.backgroundColor);
+    })
+</script>
 
 </html>
