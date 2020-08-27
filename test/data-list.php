@@ -56,25 +56,37 @@ if ($totalRows > 0) {
         <thead>
             <!-- `id``name``address``e-mail``phone``birthday``createDt` -->
             <tr>
+                <th scope="col"><i class="fas fa-trash-alt"></i></th>
+                <th scope="col"><i class="fas fa-user-times"></i></th>
                 <th scope="col">#</th>
                 <th scope="col">name</th>
                 <th scope="col">address</th>
                 <th scope="col">e-mail</th>
                 <th scope="col">phone</th>
                 <th scope="col">birthday</th>
-                <th scope="col">createDt</th>
+                <th scope="col"><i class="fas fa-edit"></i></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($rows as $r) : ?>
                 <tr>
+                    <td>
+                        <a href="data-delete.php?id=<?= $r['id'] ?>" onclick="ifDel(event)" data-id="<?= $r['id'] ?>">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+
+                    <td><a href="javascript:delete_it(<?= $r['id'] ?>)">
+                            <i class="fas fa-user-times"></i>
+                        </a></td>
                     <td><?= $r['id'] ?></td>
                     <td><?= $r['name'] ?></td>
-                    <td><?= $r['address'] ?></td>
-                    <td><?= $r['e-mail'] ?></td>
+
+                    <td><?= strip_tags($r['address']) ?></td>
+                    <td><?= htmlentities($r['email']) ?></td>
                     <td><?= $r['phone'] ?></td>
                     <td><?= $r['birthday'] ?></td>
-                    <td><?= $r['createDt'] ?></td>
+                    <td><a href="#"><i class="fas fa-edit"></i></a></td>
 
                 </tr>
             <?php endforeach ?>
@@ -82,4 +94,19 @@ if ($totalRows > 0) {
     </table>
 </div>
 <?php include __DIR__ . '/0825-parts/__js.php' ?>
+<script>
+    function ifDel(event) {
+        const a = event.currentTarget;
+        const id = a.getAttribute('data-id');
+        if (!confirm(`確定要刪除 ${id}?`)) {
+            // event.preventDefault();
+        }
+    }
+
+    function delete_it(sid) {
+        if (confirm(`是否要刪除編號為 ${sid} 的資料???`)) {
+            location.href = 'data-delete.php?id=' + sid;
+        }
+    }
+</script>
 <?php include __DIR__ . '/0825-parts/__html-f.php' ?>
