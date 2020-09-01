@@ -56,29 +56,38 @@ if ($totalRows > 0) {
         <thead>
             <!-- `id``name``address``e-mail``phone``birthday``createDt` -->
             <tr>
-                <th scope="col"><i class="fas fa-trash-alt"></i></th>
-                <th scope="col"><i class="fas fa-user-times"></i></th>
+
+                <?php if (isset($_SESSION['admin'])) : ?>
+                    <th scope="col"><i class="fas fa-trash-alt"></i></th>
+                    <th scope="col"><i class="fas fa-user-times"></i></th>
+                <?php endif; ?>
                 <th scope="col">#</th>
                 <th scope="col">name</th>
                 <th scope="col">address</th>
                 <th scope="col">e-mail</th>
                 <th scope="col">phone</th>
                 <th scope="col">birthday</th>
-                <th scope="col"><i class="fas fa-edit"></i></th>
+                <?php if (isset($_SESSION['admin'])) : ?>
+                    <th scope="col"><i class="fas fa-edit"></i></th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($rows as $r) : ?>
                 <tr>
-                    <td>
-                        <a href="data-delete.php?id=<?= $r['id'] ?>" onclick="ifDel(event)" data-id="<?= $r['id'] ?>">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
-                    </td>
 
-                    <td><a href="javascript:delete_it(<?= $r['id'] ?>)">
-                            <i class="fas fa-user-times"></i>
-                        </a></td>
+                    <?php if (isset($_SESSION['admin'])) : ?>
+                        <td>
+                            <a href="data-delete.php?id=<?= $r['id'] ?>" onclick="ifDel(event)" data-id="<?= $r['id'] ?>">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="javascript:delete_it(<?= $r['id'] ?>)">
+                                <i class="fas fa-user-times"></i>
+                            </a>
+                        </td>
+                    <?php endif; ?>
                     <td><?= $r['id'] ?></td>
                     <td><?= $r['name'] ?></td>
 
@@ -86,8 +95,14 @@ if ($totalRows > 0) {
                     <td><?= htmlentities($r['email']) ?></td>
                     <td><?= $r['phone'] ?></td>
                     <td><?= $r['birthday'] ?></td>
-                    <td><a href="#"><i class="fas fa-edit"></i></a></td>
 
+                    <?php if (isset($_SESSION['admin'])) : ?>
+                        <td>
+                            <a href="data-edit.php?id=<?= $r['id'] ?>"><i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+
+                    <?php endif; ?>
                 </tr>
             <?php endforeach ?>
         </tbody>

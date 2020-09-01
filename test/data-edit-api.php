@@ -14,6 +14,13 @@ $output = [
     'error' => '',
 ];
 //TODO 檢查資料格式
+if (empty($_POST['id'])) {
+    $output['code'] = 405;
+    $output['error'] = '沒有 id';
+    echo json_encode($output, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 if (mb_strlen($_POST['name']) < 2) {
     $output['code'] = 401;
     $output['error'] = 'name length is  wrong';
@@ -32,15 +39,22 @@ if (!preg_match('/^09\d{2}-?\d{3}-?\d{3}$/', $_POST['phone'])) {
 
 
 
-$sql = "INSERT INTO `addressTable`( `name`, `address`, `email`, `phone`, `birthday`, `createDt`)
-VALUES(?,?,?,?,?,NOW())";
+$sql = "UPDATE `addressTable` 
+SET 
+    `name`=?,
+    `address`=?,
+    `email`=?,
+    `phone`=?,
+    `birthday`=?
+    WHERE `id`=?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([
     $_POST['name'],
     $_POST['address'],
     $_POST['email'],
     $_POST['phone'],
-    $_POST['birthday']
+    $_POST['birthday'],
+    $_POST['id']
 ]);
 
 if ($stmt->rowCount()) {

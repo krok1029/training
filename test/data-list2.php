@@ -11,8 +11,8 @@ require __DIR__ . '/0825-parts/__connectDb.php';
     <div class="row">
         <div class="col d-flex justify-content-end">
             <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item ">
+                <ul class="pagination {o.active}">
+                    <!-- <li class="page-item ">
                         <a class="page-link" href="?page=">
                             <i class="fas fa-arrow-circle-left"></i>
                         </a>
@@ -26,7 +26,7 @@ require __DIR__ . '/0825-parts/__connectDb.php';
                         <a class="page-link" href="?page=">
                             <i class="fas fa-arrow-circle-right"></i>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </nav>
 
@@ -55,7 +55,29 @@ require __DIR__ . '/0825-parts/__connectDb.php';
 <?php include __DIR__ . '/0825-parts/__js.php' ?>
 <script>
     const tboday = document.querySelector('tbody');
+    let pageData;
 
+    const hashHandler = function(event) {
+        let h = parseInt(location.hash.slice(1)) || 1;
+        if (h < 1) h = 1;
+        console.log(`h: ${h}`);
+        getData(h);
+    };
+    window.addEventListener('hashchange', hashHandler);
+    hashHandler(); // 頁面一進來就直接呼叫
+
+    const pageItemTpl = (o) => {
+
+        return `<li class="page-item ${o.active}">
+                        <a class="page-link" href="#${o.page}">${o.page}</a>
+                </li>`;
+    };
+    // const pageItemTpl = (o) => {
+
+    //     return `<li class="page-item ${o.active}">
+    //             <a class="page-link" href="#">${o.page}</a>
+    //     </li>`;
+    // };
     const tableRowTpl = (o) => {
 
         return `
@@ -70,15 +92,45 @@ require __DIR__ . '/0825-parts/__connectDb.php';
         `;
     };
 
-    fetch('data-list2-api.php')
-        .then(r => r.json())
-        .then(obj => {
-            console.log(obj);
-            let str = '';
-            for (let i of obj.rows) {
-                str += tableRowTpl(i);
-            }
-            tboday.innerHTML = str;
-        });
+    // fetch('data-list2-api.php')
+    //     .then(r => r.json())
+    //     .then(obj => {
+    //         console.log(obj);
+    //         let str = '';
+    //         for (let i of obj.rows) {
+    //             str += tableRowTpl(i);
+    //         }
+    //         tboday.innerHTML = str;
+    //     });
+
+
+    function getData(page = 1) {
+        fetch('data-list2-api.php?page=' + page)
+            .then(r => r.json())
+            .then(obj => {
+                console.log(obj);
+                pageData = obj;
+                let str = '';
+                for (let i of obj.rows) {
+                    str += tableRowTpl(i);
+                }
+                tboday.innerHTML = str;
+
+                str = '';
+                for (let i = obj.page - 3; i <= obj.page + 3; i++) {
+                    if (i < 1) continue;
+                    if (i > obj.totalPages) continue;
+                    const o = {
+                        page: i,
+                        active: ''
+                    }
+                    if (obj.page === i) {
+                        o.active = 'active';
+                    }
+                    str += pageItemTpl(o);
+                }
+                document.querySelector('.pagination').innerHTML = str;
+            });
+    }
 </script>
 <?php include __DIR__ . '/0825-parts/__html-f.php' ?>

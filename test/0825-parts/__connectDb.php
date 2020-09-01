@@ -17,3 +17,6 @@ $pdo = new PDO($dsn, $db_user, $db_pass, $pdo_option);
 
 
 define('WEB_ROOT', '/training');
+if (!isset($_SESSION)) {
+    session_start();
+}

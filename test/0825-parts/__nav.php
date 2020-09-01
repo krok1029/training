@@ -13,7 +13,26 @@
                 <li class="nav-item <?= $page_name == 'data-insert' ? 'active' : '' ?>">
                     <a class="nav-link " href="<?= WEB_ROOT ?>/test/data-insert.php">add</a>
                 </li>
+                <li class="nav-item <?= $page_name == 'data-list2' ? 'active' : '' ?>">
+                    <a class="nav-link" href="<?= WEB_ROOT ?>/test/data-list2.php">列表2(ajax)</a>
+                </li>
 
+
+            </ul>
+            <ul class="navbar-nav">
+                <?php if (isset($_SESSION['admin'])) : ?>
+                    <li class="nav-item">
+                        <a class="nav-link"><?= $_SESSION['admin']['nickname'] ?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= WEB_ROOT ?>/test/logout.php">登出</a>
+                    </li>
+
+                <?php else : ?>
+                    <li class="nav-item <?= $page_name == 'login' ? 'active' : '' ?>">
+                        <a class="nav-link" href="<?= WEB_ROOT ?>/test/login.php">登入</a>
+                    </li>
+                <?php endif; ?>
 
             </ul>
 

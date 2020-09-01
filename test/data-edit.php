@@ -1,8 +1,24 @@
 <?php
-$title = 'addDaaaata';
-$page_name = 'data-insert';
+$page_title = '編輯資料';
+$page_name = 'data-edit';
 require __DIR__ . '/0825-parts/__connectDb.php';
 require __DIR__ . '/0825-parts/__admin_required.php';
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if (empty($id)) {
+    echo '123';
+
+    header('Location: data-list.php');
+    exit;
+}
+
+$sql = " SELECT * FROM addressTable WHERE id=$id";
+$row = $pdo->query($sql)->fetch();
+if (empty($row)) {
+    echo '456';
+
+    header('Location: data-list.php');
+    exit;
+}
 
 ?>
 <?php require __DIR__ . '/0825-parts/__html-h.php' ?>
@@ -18,41 +34,39 @@ require __DIR__ . '/0825-parts/__admin_required.php';
 
 <?php require __DIR__ . '/0825-parts/__nav.php' ?>
 <div class="container">
-    <h2>insert</h2>
     <div class="row">
         <div class="col-lg-6">
             <div class="alert alert-success" role="alert" id="infobar" style="display: none;">
                 A simple success alert—check it out!
             </div>
             <div class="card-body">
-                <h5 class="card-title">Add Datas</h5>
-                <form name="form1" onsubmit="return checkFrom()" novalidate>
-                    <div class="form-group">
-                        <label for="name"><span class="red-star">**</span>Name</label>
-                        <input type="text" class="form-control" id="name" aria-describedby="emailHelp" name="name" required>
-                        <small id="" class="form-text error-msg"></small>
+                <h5 class="card-title">編輯資料</h5>
 
+                <form name="form1" onsubmit="checkForm(); return false ;" novalidate>
+                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                    <div class="form-group">
+                        <label for="name"><span class="red-stars">**</span> name</label>
+                        <input type="text" class="form-control" id="name" name="name" required value="<?= htmlentities($row['name']) ?>">
+                        <small class="form-text error-msg"></small>
                     </div>
                     <div class="form-group">
-                        <label for="address">Addr</label>
-                        <textarea class="form-control" name="address" id="address" cols="30" rows="3"></textarea>
-
+                        <label for="email"><span class="red-stars">**</span> email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="<?= htmlentities($row['email']) ?>">
+                        <small class="form-text error-msg"></small>
                     </div>
                     <div class="form-group">
-                        <label for="email"><span class="red-star">**</span>Email</label>
-                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
-                        <small id="" class="form-text  error-msg"></small>
+                        <label for="phone"><span class="red-stars">**</span> phone</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="<?= htmlentities($row['phone']) ?>" pattern="09\d{2}-?\d{3}-?\d{3}">
+                        <small class="form-text error-msg"></small>
                     </div>
                     <div class="form-group">
-                        <label for="birthday">Birth</label>
-                        <input type="date" class="form-control" id="birthday" aria-describedby="emailHelp" name="birthday">
+                        <label for="birthday">birthday</label>
+                        <input type="date" class="form-control" id="birthday" name="birthday" value="<?= htmlentities($row['birthday']) ?>">
                     </div>
                     <div class="form-group">
-                        <label for="phone"><span class="red-star">**</span>phone</label>
-                        <input type="tel" class="form-control" id="phone" aria-describedby="emailHelp" name="phone" pattern="09\d{2}-?\d{3}-?\d{3}-?">
-                        <small id="" class="form-text error-msg"></small>
+                        <label for="address">address</label>
+                        <textarea class="form-control" name="address" id="address" cols="30" rows="3"><?= htmlentities($row['address']) ?></textarea>
                     </div>
-
 
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -71,7 +85,7 @@ require __DIR__ . '/0825-parts/__admin_required.php';
     const infobar = document.querySelector('#infobar');
     const submitBtn = document.querySelector('button[type=submit]');
 
-    function checkFrom() {
+    function checkForm() {
         let isPass = true;
 
         r_fields.forEach(el => {
@@ -97,42 +111,33 @@ require __DIR__ . '/0825-parts/__admin_required.php';
         }
         if (isPass) {
             const fd = new FormData(document.form1);
-            fetch('./data-insert-api.php', {
+            fetch('data-edit-api.php', {
                     method: 'POST',
                     body: fd
                 })
-                .then(r => {
-
-                    // console.log(r);
-                    return r.json();
-                })
+                .then(r => r.json())
                 .then(obj => {
                     console.log(obj);
-                    // console.log(obj.success);
                     if (obj.success) {
-                        infobar.innerHTML = 'Add success!';
+                        infobar.innerHTML = '修改成功';
                         infobar.className = "alert alert-success";
+                        console.log('qwe==' + '<?= $_SERVER['HTTP_REFERER'] ?? "data-list.php" ?>');
+
                         setTimeout(() => {
-                            location.href = './data-list.php';
-                        }, 3000);
-                        // if (infobar.classList.contains('alert-danger')) {
-                        //     infobar.classList.replace('alert-danger', 'alert-success');
-                        // }
+                            location.href = '<?= $_SERVER['HTTP_REFERER'] ?? "data-list.php" ?>';
+                        }, 3000)
+
                     } else {
-                        infobar.innerHTML = obj.error || 'fail';
+                        infobar.innerHTML = obj.error || '資料沒有修改';
                         infobar.className = "alert alert-danger";
-                        submitBtn.style.display = "block";
-                        // if (infobar.classList.contains('alert-success')) {
-                        //     infobar.classList.replace('alert-success', 'alert-danger');
-                        // }
+                        submitBtn.style.display = 'block';
                     }
-                    infobar.style.display = "block";
+                    infobar.style.display = 'block';
                 });
         } else {
 
             submitBtn.style.display = "block";
         }
-        return false;
     }
 </script>
 <?php include __DIR__ . '/0825-parts/__html-f.php' ?>
